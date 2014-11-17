@@ -4,7 +4,7 @@
   <title><![CDATA[风行的博客]]></title>
   <link href="http://lijingcheng.github.io/atom.xml" rel="self"/>
   <link href="http://lijingcheng.github.io/"/>
-  <updated>2014-11-14T00:36:24+08:00</updated>
+  <updated>2014-11-17T12:59:10+08:00</updated>
   <id>http://lijingcheng.github.io/</id>
   <author>
     <name><![CDATA[风行]]></name>
@@ -14,11 +14,11 @@
 
   
   <entry>
-    <title type="html"><![CDATA[关于我]]></title>
-    <link href="http://lijingcheng.github.io/blog/20141111/guan-yu-wo/"/>
-    <updated>2014-11-11T15:52:01+08:00</updated>
-    <id>http://lijingcheng.github.io/blog/20141111/guan-yu-wo</id>
-    <content type="html"><![CDATA[
+    <title type="html"><![CDATA[在Mac下通过Github Pages + Octopress搭建博客]]></title>
+    <link href="http://lijingcheng.github.io/blog/20141117/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke/"/>
+    <updated>2014-11-17T12:19:36+08:00</updated>
+    <id>http://lijingcheng.github.io/blog/20141117/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke</id>
+    <content type="html"><![CDATA[<p>hello world</p>
 ]]></content>
   </entry>
   
