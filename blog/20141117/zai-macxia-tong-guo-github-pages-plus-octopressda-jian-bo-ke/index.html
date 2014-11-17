@@ -87,12 +87,29 @@
 </div>
 
 </article>
-｛% if site.duoshuo_short_name and site.duoshuo_comments == true and page.comments == true %｝
+
   <section>
-    <h1>Comments</h1>
-    <div id="comments" aria-live="polite">｛% include post/duoshuo1.html %｝</div>
+    <h1>评论</h1>
+    <div id="comments" aria-live="polite">&#8212;
+layout: page
+date: 2014-11-17 18:36
+&#8212;
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread"></div>
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"beyondvincent"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+<!-- Duoshuo Comment END --></div>
   </section>
-｛% endif %｝</div>
+</div>
 			</div>
 			<footer id="footer" class="inner">Copyright &copy; 2014
 
