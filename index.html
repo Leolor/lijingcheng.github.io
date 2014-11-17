@@ -36,7 +36,7 @@
 <nav id="main-nav"><ul class="main">
     <li><a href="/">首页</a></li>
     <li><a href="/blog/archives">归档</a></li>
-    <li><a href="http://about.me/shashankmehta">关于我</a></li>
+    <li><a href="/custom/asides/aboutme.html">关于我</a></li>
 </ul>
 
 <section class="aboutme">
@@ -44,6 +44,38 @@
     一个什么都想搞一搞的程序猿~.
   </p>
 </section>
+
+
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/lijingcheng">@lijingcheng</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'lijingcheng',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
 </nav>
 <nav id="sub-nav">
 	<div class="social">
@@ -96,37 +128,6 @@
 	<h1 class="title" itemprop="name"><a href="/blog/20141117/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke/" itemprop="url">在Mac下通过Github Pages + Octopress搭建博客</a></h1>
 	<div class="entry-content" itemprop="articleBody">
 		<p>hello world</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-11-11T15:52:01+08:00" data-updated="true" itemprop="datePublished"></time></div>
-		<div class="tags">
-
-</div>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/20141111/guan-yu-wo/" itemprop="url">关于我</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		
 
 		
 		
