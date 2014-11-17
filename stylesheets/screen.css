@@ -202,7 +202,7 @@ a {
 #main-nav>ul>li>a:after {
 	content: "\f078";
 	color: #ccc;
-	font: 12px FontAwesome;
+	font: 14px FontAwesome;
 	padding-left: 10px
 }
 
