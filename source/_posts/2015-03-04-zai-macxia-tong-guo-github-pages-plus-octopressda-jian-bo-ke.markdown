@@ -13,7 +13,7 @@ categories:
 <br/>  
 >**[Octopress](http://octopress.org) - *A blogging framework for hackers.***  
 作为一款开源的静态博客系统，可以用来为我们的静态网站提供所需的HTML页面。
-
+<!-- more -->
 <br/>
 #准备工作
 - 需要git环境并且已经将创建好的ssh keys添加到github帐户下。
@@ -112,5 +112,3 @@ var duoshuoQuery = {short_name:"your_short_name"};
 </section>
 {% endif %}
 ```
-
-<!-- more -->
