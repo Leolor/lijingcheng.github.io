@@ -1,1 +1,8 @@
-{% include custom/footer.html %}
+Copyright &copy; {{ site.time | date: "%Y" }}
+{% if site.author %}
+    {{ site.author }}
+{% else %}
+    {{ site.title }}
+{% endif %}
+Powered by <a target="_blank" href="http://octopress.org/">Octopress</a>
+Design credit: <a target="_blank" href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>

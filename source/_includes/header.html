@@ -1,1 +1,22 @@
-{% include custom/header.html %}
+<div class="profilepic">
+	<img src="{{ root_url }}/images/avatar.png" alt="头像" style="width: 180px;" />
+</div>
+<nav id="main-nav">{% include navigation.html %}</nav>
+
+<img src="{{ root_url }}/images/qrcode.png" alt="扫一扫" style="width: 200px;" />
+<nav id="sub-nav">
+	<div class="social">
+		{% if site.email %}
+			<a class="email" href="mailto:{{ site.email }}" title="邮件">邮件</a>&nbsp;
+		{% endif %}
+		{% if site.weibo_user %}
+			<a class="weibo" target="_blank" href="http://www.weibo.com/{{ site.weibo_user }}" title="微博">微博</a>&nbsp;
+		{% endif %}
+		{% if site.github_user %}
+			<a class="github" target="_blank" href="https://github.com/{{ site.github_user }}" title="GitHub">GitHub</a>&nbsp;
+		{% endif %}
+    	{% if site.subscribe_rss %}
+			<a class="rss" target="_blank" href="{{ site.subscribe_rss }}" title="RSS">RSS</a>&nbsp;
+		{% endif %}
+	</div>
+</nav>
