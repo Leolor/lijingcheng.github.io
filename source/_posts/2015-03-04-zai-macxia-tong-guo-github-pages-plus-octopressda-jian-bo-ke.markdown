@@ -1,13 +1,12 @@
 ---
 layout: post
 title: "在Mac下通过Github Pages + Octopress搭建博客"
-date: 2015-03-04 14:51:02 +0800
+date: 2015-01-04 14:51:02 +0800
 comments: true
 categories: 
 ---
----
 
-{% img left http://7x00ed.com1.z0.glb.clouddn.com/github-octopress.png 230 250 "" "" %}
+>{% img left http://7x00ed.com1.z0.glb.clouddn.com/github-octopress.png 220 220 "" "" %}
 >**[Github Pages](https://pages.github.com) - *Websites for you and your projects.***   
 可用来搭建静态网站，它提供免费的域名、空间、无限流量，并且在世界各地都有较好的访问速度。不过网站也会轻易被人Clone，如果在意的话可以付费给github，然后将相关版本库建成私有的。
 <br/>  
@@ -62,7 +61,7 @@ rake setup_github_pages (然后输入 git@github.com:yourname/yourname.github.co
 <br/>
 
 #写博客
-- 新建博客，会在"\octopress\source\\_posts"目录下生成扩展名为"markdown"的文件，推荐使用["Mou"](http://25.io/mou/)编辑器编写markdown文件并尽量采用[Markdown语法](http://wowubuntu.com/markdown/)。
+- 新建文章，会在"\octopress\source\\_posts"目录下生成扩展名为"markdown"的文件，推荐使用["Mou"](http://25.io/mou/)编辑器编写markdown文件并尽量采用[Markdown语法](http://wowubuntu.com/markdown/)。
 ```
 rake new_post["new_blog_title"]
 ```
