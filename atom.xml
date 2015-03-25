@@ -4,7 +4,7 @@
   <title><![CDATA[风行的博客]]></title>
   <link href="http://lijingcheng.github.io/atom.xml" rel="self"/>
   <link href="http://lijingcheng.github.io/"/>
-  <updated>2015-03-05T13:03:37+08:00</updated>
+  <updated>2015-03-25T15:12:30+08:00</updated>
   <id>http://lijingcheng.github.io/</id>
   <author>
     <name><![CDATA[风行]]></name>
@@ -14,15 +14,260 @@
 
   
   <entry>
+    <title type="html"><![CDATA[用CocoaPods为iOS项目做依赖管理]]></title>
+    <link href="http://lijingcheng.github.io/blog/20150211/yong-cocoapodswei-iosxiang-mu-zuo-yi-lai-guan-li/"/>
+    <updated>2015-02-11T15:10:58+08:00</updated>
+    <id>http://lijingcheng.github.io/blog/20150211/yong-cocoapodswei-iosxiang-mu-zuo-yi-lai-guan-li</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/cocoapods.png" width="190" height="190"  ></p>
+
+<blockquote><p><strong><a href="http://www.cocoapods.org">CocoaPods</a> - <em>Get on with building your app, not duplicating code.</em></strong> <br/>
+可以为Cocoa和Swift项目使用的第三方类库和我们自己的私有类库提供依赖管理，就像Java领域的Maven。
+我们只需要告诉它要使用的类库名称和版本，然后再执行一条命令，它就会自动将这个类库的源码从github上下载到本地，并且为工程设置好相应的系统依赖和编译选项。使用CocoaPods可以大大节省我们在设置和更新类库时所花的时间。</p></blockquote>
+
+<!-- more -->
+
+
+<p><br/></p>
+
+<h1>准备工作</h1>
+
+<p>由于CocoaPods是用ruby写的，并且主要用于管理github上的第三方类库，所以在安装前需要有Ruby环境和Git环境。Git环境可以通过下载Xcode中的Command Line Tools建立。Ruby环境可以使用Mac系统默认提供的版本，也可以通过以下命令将它更新至最新版。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo gem update –system</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+<br/>
+为了提高下载速度，还需要将ruby的源更改为淘宝的</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem sources -a http://ruby.taobao.org/  (添加)
+</span><span class='line'>gem sources -r http://rubygems.org/  (删除)
+</span><span class='line'>gem sources -l  (检查一下)</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p><br/></p>
+
+<h1>安装并使用CocoaPods</h1>
+
+<ul>
+<li>安装CocoaPods</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo gem install cocoapods (更新命令也是这个)</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>下载CocoaPods维护的所有podspec文件到&#8221;~/.cocoapods/repos/master/Specs&#8221;</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod setup</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>更新spec也用这个命令，podspec文件主要用来描述依赖库的名称、版本、作者、下载地址等信息。通过CocoaPods下载第三方类库，其实就是根据我们指定的类库名称找到相关的podspec，然后再根据podspec文件中指定的地址去下载。</p></blockquote>
+
+<ul>
+<li>查看CocoaPods管理的依赖库信息</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod search 依赖库的名字</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>新建Podfile文件，此文件用于配置项目所需要使用的依赖库</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd "项目根目录"
+</span><span class='line'>pod init</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>打开Podfile文件，按下面内容配置依赖关系，Podfile的更详细配置方法可参照<a href="http://guides.cocoapods.org/syntax/podfile.html">官方文档</a></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>source 'https://github.com/CocoaPods/Specs.git'
+</span><span class='line'>
+</span><span class='line'>platform :ios, '7.0'
+</span><span class='line'>inhibit_all_warnings!
+</span><span class='line'>
+</span><span class='line'>pod 'AFNetworking', '2.5.1' </span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>上面内容的意思是，specs文件由CocoaPods提供，项目需要使用支持ios7.0及以上的依赖库，并且为主target配置了2.5.1版本的AFNetworking，并忽略依赖库中的所有警告。依赖库的版本号建议明确指定，这样可以避免更新依赖库后对现有工程造成影响。</p></blockquote>
+
+<p>如果你的项目有多个target，那么需要按下面的方式配置pod，否则依赖关系只能作用于主target。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#Tests target 不仅使用主target的依赖库还需要添加自己的
+</span><span class='line'>target 'Tests' do
+</span><span class='line'>  pod "Tests需要的依赖库"
+</span><span class='line'>end
+</span><span class='line'>或
+</span><span class='line'>#Tests target不需要主target的依赖库
+</span><span class='line'>target 'Tests', :exclusive =&gt; true do
+</span><span class='line'>  pod "Tests需要的依赖库"
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>根据Podfile下载安装依赖库</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod install (添加或删除依赖库后也是通过此命令更新)</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p><strong>Cocoapods会先更新相关podspec文件，然后自动为项目工程设置好相应的系统依赖和编译参数，当依赖库安装完成后，打开项目根目录，会发现多了以下文件及文件夹</strong></p>
+
+<ol>
+<li>&ldquo;.xcworkspace&#8221;，以后必须通过此workspace打开项目。</li>
+<li>&ldquo;Pods&#8221;，CocoaPods将Profile中配置的所有依赖库都下载到这里，并且将所有依赖库打包成单独的静态库供主项目使用。</li>
+<li>&ldquo;Podfile.lock&#8221;，用于保存已经安装的依赖库版本信息。如果在配置依赖库时没有明确指定版本，那么必须将此文件加入到版本控制中，否则有可能造成团队开发中不同成员使用的依赖库版本不一致。</li>
+</ol>
+</blockquote>
+
+<ul>
+<li>查看所下载的依赖库是否有新版本</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod outdated</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>下载新版本</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod update</span></code></pre></td></tr></table></div></figure>
+
+
+<p><br/></p>
+
+<h1>让自己的开源项目支持Cocoapods</h1>
+
+<h4>通过Cocoapods创建项目会让整个事情变的简单一些</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod lib create FMDBHelper</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p><strong>创建完成后项目根目录会包含以下文件及文件夹</strong></p>
+
+<ol>
+<li>&ldquo;.travis.yml&#8221;，通过&#8221;travis-ci&#8221;做持续集成要用到的配置文件，一般情况下使用默认配置就可以，如果需要使用持续集成服务，还需要以github帐号登录<a href="https://travis-ci.org">travis-ci</a>，并打开对应项目开关。</li>
+<li>&ldquo;.gitignore&#8221;，建议将Pods目录也加入到忽略范围</li>
+<li>&ldquo;LICENSE&#8221;，默认为MIT</li>
+<li>&ldquo;FMDBHelper.podspec&#8221;，通过Cocoapods下载项目时要用到的项目配置文件。</li>
+<li>&ldquo;README.md&#8221;，通过markdown语法编写此文件，用于在github上显示项目介绍。</li>
+<li>&ldquo;Pod&#8221;，将自己的开源代码和资源文件放到这里</li>
+<li>&ldquo;Example&#8221;，demo工程，包含测试用的target。</li>
+</ol>
+</blockquote>
+
+<h4>在demo工程中开发并测试</h4>
+
+<ul>
+<li>将源代码和资源文件分别放到&#8221;Pod/Classes&#8221;和&#8221;Pod/Assets&#8221;目录下</li>
+<li>用&#8221;pod install&#8221;命令为demo工程安装依赖库，以后只要新增依赖库的代码或资源文件都需要更新</li>
+<li>开发测试完成后还需要修改podspec文件</li>
+</ul>
+
+
+<h4>将podspec发布到CocoaPods的Git库中</h4>
+
+<ul>
+<li>向cocoapods注册你的信息，需要输入邮箱(与podspec中写的一致)和名字，稍后还需要验证email</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod trunk register bj_lijingcheng@163.com "lijingcheng"</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>登录github，release一版项目并打上标签，标签要与podspec中定义的一致</li>
+<li>检查spec文件是否合格</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod spec lint FMDBHelper.podspec</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>发布spec文件，以后需要升级也是用这个命令</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod trunk push FMDBHelper.podspec</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>更新本地spec</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod setup (稍后便可以在"~/.cocoapods/repos/master/Specs"下看到你的开源项目了)</span></code></pre></td></tr></table></div></figure>
+
+
+<p><br/></p>
+
+<h1>通过Cocoapods安装私有库</h1>
+
+<p>对于不能放在CocoaPods公共Git仓库中的类库，可选择以下方式设置</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod 'FMDBHelper', :podspec =&gt; 'https://.../FMDBHelper.podspec'
+</span><span class='line'>pod 'FMDBHelper', :git =&gt; 'https://.../FMDBHelper.git'
+</span><span class='line'>pod 'FMDBHelper', :path =&gt; '~/documents/code/Pods/'</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[在Mac下通过Github Pages + Octopress搭建博客]]></title>
-    <link href="http://lijingcheng.github.io/blog/20150304/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke/"/>
-    <updated>2015-03-04T14:51:02+08:00</updated>
-    <id>http://lijingcheng.github.io/blog/20150304/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke</id>
-    <content type="html"><![CDATA[<hr />
-
-<p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/github-octopress.png" width="230" height="250"  ></p>
-
-<blockquote><p><strong><a href="https://pages.github.com">Github Pages</a> - <em>Websites for you and your projects.</em></strong> <br/>
+    <link href="http://lijingcheng.github.io/blog/20150104/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke/"/>
+    <updated>2015-01-04T14:51:02+08:00</updated>
+    <id>http://lijingcheng.github.io/blog/20150104/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke</id>
+    <content type="html"><![CDATA[<blockquote><p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/github-octopress.png" width="220" height="220"  >
+<strong><a href="https://pages.github.com">Github Pages</a> - <em>Websites for you and your projects.</em></strong> <br/>
 可用来搭建静态网站，它提供免费的域名、空间、无限流量，并且在世界各地都有较好的访问速度。不过网站也会轻易被人Clone，如果在意的话可以付费给github，然后将相关版本库建成私有的。
 <br/><br/>
 <strong><a href="http://octopress.org">Octopress</a> - <em>A blogging framework for hackers.</em></strong><br/>
@@ -127,7 +372,7 @@
 <h1>写博客</h1>
 
 <ul>
-<li>新建博客，会在&#8221;\octopress\source\_posts&#8221;目录下生成扩展名为&#8221;markdown&#8221;的文件，推荐使用<a href="http://25.io/mou/">&ldquo;Mou&rdquo;</a>编辑器编写markdown文件并尽量采用<a href="http://wowubuntu.com/markdown/">Markdown语法</a>。</li>
+<li>新建文章，会在&#8221;\octopress\source\_posts&#8221;目录下生成扩展名为&#8221;markdown&#8221;的文件，推荐使用<a href="http://25.io/mou/">&ldquo;Mou&rdquo;</a>编辑器编写markdown文件并尽量采用<a href="http://wowubuntu.com/markdown/">Markdown语法</a>。</li>
 </ul>
 
 
