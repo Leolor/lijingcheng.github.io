@@ -23,7 +23,7 @@ sudo gem update –system
 为了提高下载速度，还需要将ruby的源更改为淘宝的  
 ```
 gem sources -a http://ruby.taobao.org/  (添加)
-gem sources -r http://rubygems.org/  (删除)
+gem sources -r https://rubygems.org/  (删除)
 gem sources -l  (检查一下)
 ``` 
 
