@@ -6,7 +6,7 @@ comments: true
 categories: 
 ---
 
-
+<br/>
 {% img left http://7x00ed.com1.z0.glb.clouddn.com/cocoapods.png 190 190 "" "" %}
 >**[CocoaPods](http://www.cocoapods.org) - *Get on with building your app, not duplicating code.***   
 可以为Cocoa和Swift项目使用的第三方类库和我们自己的私有类库提供依赖管理，就像Java领域的Maven。

@@ -6,7 +6,7 @@ comments: true
 categories: 
 ---
 
-
+<br/>
 {% img left http://7x00ed.com1.z0.glb.clouddn.com/app-lifecycle.jpeg 160 160 "" "" %}
 >**生命周期 - *程序的生命周期是指应用程序从启动到结束整个阶段的全过程.***   
 点击iOS应用图标打开程序，系统会首先通过main函数进行相关设置，然后通过runloop保持程序能够始终运行并监听处理分发事件，当没有事件发生时runloop便处于睡眠状态，节省资源。当发生事件后，runloop将事件对象分发给相应视图处理。当用户按下home键，应用会在进入后台后短暂运行，直到被系统挂起。

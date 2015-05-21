@@ -1,11 +1,12 @@
 ---
 layout: post
-title: "在Mac下通过Github Pages + Octopress搭建博客"
+title: "在Mac下用Github Pages + Octopress搭建博客"
 date: 2015-01-04 14:51:02 +0800
 comments: true
 categories: 
 ---
 
+<br/>
 >{% img left http://7x00ed.com1.z0.glb.clouddn.com/github-octopress.png 220 220 "" "" %}
 >**[Github Pages](https://pages.github.com) - *Websites for you and your projects.***   
 可用来搭建静态网站，它提供免费的域名、空间、无限流量，并且在世界各地都有较好的访问速度。不过网站也会轻易被人Clone，如果在意的话可以付费给github，然后将相关版本库建成私有的。
