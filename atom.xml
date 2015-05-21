@@ -4,7 +4,7 @@
   <title><![CDATA[风行的博客]]></title>
   <link href="http://lijingcheng.github.io/atom.xml" rel="self"/>
   <link href="http://lijingcheng.github.io/"/>
-  <updated>2015-05-21T14:30:17+08:00</updated>
+  <updated>2015-05-21T14:35:47+08:00</updated>
   <id>http://lijingcheng.github.io/</id>
   <author>
     <name><![CDATA[风行]]></name>
@@ -429,7 +429,7 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>gem sources -a http://ruby.taobao.org/  (添加)
-</span><span class='line'>gem sources -r http://rubygems.org/  (删除)
+</span><span class='line'>gem sources -r https://rubygems.org/  (删除)
 </span><span class='line'>gem sources -l  (检查一下)</span></code></pre></td></tr></table></div></figure>
 
 
