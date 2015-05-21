@@ -4,7 +4,7 @@
   <title><![CDATA[风行的博客]]></title>
   <link href="http://lijingcheng.github.io/atom.xml" rel="self"/>
   <link href="http://lijingcheng.github.io/"/>
-  <updated>2015-05-21T14:35:47+08:00</updated>
+  <updated>2015-05-21T15:45:54+08:00</updated>
   <id>http://lijingcheng.github.io/</id>
   <author>
     <name><![CDATA[风行]]></name>
@@ -18,7 +18,8 @@
     <link href="http://lijingcheng.github.io/blog/20150328/iosying-yong-de-sheng-ming-zhou-qi/"/>
     <updated>2015-03-28T11:23:29+08:00</updated>
     <id>http://lijingcheng.github.io/blog/20150328/iosying-yong-de-sheng-ming-zhou-qi</id>
-    <content type="html"><![CDATA[<p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/app-lifecycle.jpeg" width="160" height="160"  ></p>
+    <content type="html"><![CDATA[<p><br/>
+<img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/app-lifecycle.jpeg" width="160" height="160"  ></p>
 
 <blockquote><p><strong>生命周期 - <em>程序的生命周期是指应用程序从启动到结束整个阶段的全过程.</em></strong> <br/>
 点击iOS应用图标打开程序，系统会首先通过main函数进行相关设置，然后通过runloop保持程序能够始终运行并监听处理分发事件，当没有事件发生时runloop便处于睡眠状态，节省资源。当发生事件后，runloop将事件对象分发给相应视图处理。当用户按下home键，应用会在进入后台后短暂运行，直到被系统挂起。</p></blockquote>
@@ -143,7 +144,8 @@
     <link href="http://lijingcheng.github.io/blog/20150211/yong-cocoapodswei-iosxiang-mu-zuo-yi-lai-guan-li/"/>
     <updated>2015-02-11T15:10:58+08:00</updated>
     <id>http://lijingcheng.github.io/blog/20150211/yong-cocoapodswei-iosxiang-mu-zuo-yi-lai-guan-li</id>
-    <content type="html"><![CDATA[<p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/cocoapods.png" width="190" height="190"  ></p>
+    <content type="html"><![CDATA[<p><br/>
+<img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/cocoapods.png" width="190" height="190"  ></p>
 
 <blockquote><p><strong><a href="http://www.cocoapods.org">CocoaPods</a> - <em>Get on with building your app, not duplicating code.</em></strong> <br/>
 可以为Cocoa和Swift项目使用的第三方类库和我们自己的私有类库提供依赖管理，就像Java领域的Maven。
@@ -387,11 +389,13 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[在Mac下通过Github Pages + Octopress搭建博客]]></title>
+    <title type="html"><![CDATA[在Mac下用Github Pages + Octopress搭建博客]]></title>
     <link href="http://lijingcheng.github.io/blog/20150104/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke/"/>
     <updated>2015-01-04T14:51:02+08:00</updated>
     <id>http://lijingcheng.github.io/blog/20150104/zai-macxia-tong-guo-github-pages-plus-octopressda-jian-bo-ke</id>
-    <content type="html"><![CDATA[<blockquote><p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/github-octopress.png" width="220" height="220"  >
+    <content type="html"><![CDATA[<p><br/></p>
+
+<blockquote><p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/github-octopress.png" width="220" height="220"  >
 <strong><a href="https://pages.github.com">Github Pages</a> - <em>Websites for you and your projects.</em></strong> <br/>
 可用来搭建静态网站，它提供免费的域名、空间、无限流量，并且在世界各地都有较好的访问速度。不过网站也会轻易被人Clone，如果在意的话可以付费给github，然后将相关版本库建成私有的。
 <br/><br/>
