@@ -41,6 +41,8 @@ runloop能够保持程序始终运行并监听处理分发事件，当没有事�
 - 在线程中需要持续监测某个事件。例如使用NSURLConnection异步请求数据，如果没有开启runloop，会因为子线程的结束导致相关delegate方法不会被触发。(如果你使用AFNetworking，那么就不用考虑这个问题了，因为它已经帮你做了)
 - 线程间需要持续交互，例如当多个线程之间产生同步问题时，可以根据情况考虑将多个线程定义成多个事件源，然后让它们运行在同一线程的runloop下。
 - 使用NSTimer或performSelector系列方法。
+	- performSelecter:afterDelay: 会创建timer并添加到当前线程的runloop中。
+	- performSelector:onThread: 会创建timer并添加到指定线程的runloop中。
 
 <br/>
 不同的事件源会运行在runloop的不同模式中，它们只有在相匹配的情况下才会被处理。
