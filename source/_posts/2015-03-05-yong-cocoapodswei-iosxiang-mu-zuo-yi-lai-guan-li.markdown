@@ -7,6 +7,7 @@ categories:
 ---
 
 <br/>
+
 {% img left http://7x00ed.com1.z0.glb.clouddn.com/cocoapods.png 190 190 "" "" %}
 >**[CocoaPods](http://www.cocoapods.org) - *Get on with building your app, not duplicating code.***   
 可以为Cocoa和Swift项目使用的第三方类库和我们自己的私有类库提供依赖管理，就像Java领域的Maven。
@@ -22,7 +23,7 @@ sudo gem update –system
 <br/>
 为了提高下载速度，还需要将ruby的源更改为淘宝的  
 ```
-gem sources -a http://ruby.taobao.org/  (添加)
+gem sources -a https://ruby.taobao.org/  (添加)
 gem sources -r https://rubygems.org/  (删除)
 gem sources -l  (检查一下)
 ``` 
