@@ -4,7 +4,7 @@
   <title><![CDATA[风行的博客]]></title>
   <link href="http://lijingcheng.github.io/atom.xml" rel="self"/>
   <link href="http://lijingcheng.github.io/"/>
-  <updated>2015-06-01T11:23:43+08:00</updated>
+  <updated>2015-10-20T15:14:28+08:00</updated>
   <id>http://lijingcheng.github.io/</id>
   <author>
     <name><![CDATA[风行]]></name>
@@ -12,6 +12,104 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[我在github上的开源项目]]></title>
+    <link href="http://lijingcheng.github.io/blog/20151014/wo-zai-githubshang-de-kai-yuan-xiang-mu/"/>
+    <updated>2015-10-14T17:19:43+08:00</updated>
+    <id>http://lijingcheng.github.io/blog/20151014/wo-zai-githubshang-de-kai-yuan-xiang-mu</id>
+    <content type="html"><![CDATA[<p><br/>
+<img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/github.jpg" width="250" height="110"  ></p>
+
+<blockquote><p><strong>开源的这些项目，都是我在公司项目中应用到的一些功能，虽然大多看起来是在重复造轮子，不过如果造出的轮子能够更适合项目又方便维护，并且不影响项目进度，我觉得那也是值得的.</strong></p></blockquote>
+
+<p><br/></p>
+
+<!-- more -->
+
+
+<hr />
+
+<h1>JCBannerView</h1>
+
+<p><br/>
+图片支持自动滚动以及点击事件。<a href="https://github.com/lijingcheng/JCBannerView">github地址</a><br/>
+<br/>
+<img width="320" src="https://github.com/lijingcheng/JCBannerView/raw/master/ScreenShot.png"></p>
+
+<h2><br/></h2>
+
+<h1>JCSegmentBarController</h1>
+
+<p><br/>
+集成简单，并支持横向滚动。<a href="https://github.com/lijingcheng/JCSegmentBarController">github地址</a><br/>
+<br/>
+<img width="320" src="https://github.com/lijingcheng/JCSegmentBarController/raw/master/ScreenShot.gif"></p>
+
+<h2><br/></h2>
+
+<h1>FMDBHelper</h1>
+
+<p><br/>
+更容易的使用FMDB，并且支持ORM以及将JSON对象映射到对应的Model类。<a href="https://github.com/lijingcheng/FMDBHelper">github地址</a><br/>
+<br/>
+<img width="320" src="https://github.com/lijingcheng/FMDBHelper/raw/master/logo.png"></p>
+
+<h2><br/></h2>
+
+<h1>JCTagListView</h1>
+
+<p><br/>
+支持删除标签和设置标签颜色。<a href="https://github.com/lijingcheng/JCTagListView">github地址</a><br/>
+<br/>
+<img width="320" src="https://github.com/lijingcheng/JCTagListView/raw/master/ScreenShot.png"></p>
+
+<h2><br/></h2>
+
+<h1>JCWheelView</h1>
+
+<p><br/>
+支持旋转事件和点击事件。<a href="https://github.com/lijingcheng/JCWheelView">github地址</a><br/>
+<br/>
+<img width="320" src="https://github.com/lijingcheng/JCWheelView/raw/master/ScreenShot.gif"></p>
+
+<h2><br/></h2>
+
+<h1>JCPullToRefreshView</h1>
+
+<p><br/>
+下拉刷新和上拉刷新。<a href="https://github.com/lijingcheng/JCPullToRefreshView">github地址</a><br/>
+<br/>
+<img width="320" src="https://github.com/lijingcheng/JCPullToRefreshView/raw/master/ScreenShot.gif"></p>
+
+<h2><br/></h2>
+
+<h1>JCCollectionViewWaterfallLayout</h1>
+
+<p><br/>瀑布流组件，可添加headerView和footerView。<a href="https://github.com/lijingcheng/JCCollectionViewWaterfallLayout">github地址</a><br/>
+<br/>
+<img width="320" src="https://github.com/lijingcheng/JCCollectionViewWaterfallLayout/raw/master/ScreenShot.png"></p>
+
+<p><br/></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[iOS应用开发流程]]></title>
+    <link href="http://lijingcheng.github.io/blog/20151010/iosying-yong-kai-fa-liu-cheng/"/>
+    <updated>2015-10-10T10:36:14+08:00</updated>
+    <id>http://lijingcheng.github.io/blog/20151010/iosying-yong-kai-fa-liu-cheng</id>
+    <content type="html"><![CDATA[<p><br/>
+<img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/Xcode.png" width="160" height="160"  ></p>
+
+<blockquote><p><strong>软件开发流程 - <em>to be continue&hellip;</em></strong></p></blockquote>
+
+<p><br/></p>
+
+<!-- more -->
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS应用的生命周期]]></title>
@@ -150,8 +248,9 @@
     <link href="http://lijingcheng.github.io/blog/20150211/yong-cocoapodswei-iosxiang-mu-zuo-yi-lai-guan-li/"/>
     <updated>2015-02-11T15:10:58+08:00</updated>
     <id>http://lijingcheng.github.io/blog/20150211/yong-cocoapodswei-iosxiang-mu-zuo-yi-lai-guan-li</id>
-    <content type="html"><![CDATA[<p><br/>
-<img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/cocoapods.png" width="190" height="190"  ></p>
+    <content type="html"><![CDATA[<p><br/></p>
+
+<p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/cocoapods.png" width="190" height="190"  ></p>
 
 <blockquote><p><strong><a href="http://www.cocoapods.org">CocoaPods</a> - <em>Get on with building your app, not duplicating code.</em></strong> <br/>
 可以为Cocoa和Swift项目使用的第三方类库和我们自己的私有类库提供依赖管理，就像Java领域的Maven。
@@ -177,7 +276,7 @@
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>gem sources -a http://ruby.taobao.org/  (添加)
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem sources -a https://ruby.taobao.org/  (添加)
 </span><span class='line'>gem sources -r https://rubygems.org/  (删除)
 </span><span class='line'>gem sources -l  (检查一下)</span></code></pre></td></tr></table></div></figure>
 
@@ -438,7 +537,7 @@
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>gem sources -a http://ruby.taobao.org/  (添加)
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem sources -a https://ruby.taobao.org/  (添加)
 </span><span class='line'>gem sources -r https://rubygems.org/  (删除)
 </span><span class='line'>gem sources -l  (检查一下)</span></code></pre></td></tr></table></div></figure>
 
