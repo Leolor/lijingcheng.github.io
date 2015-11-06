@@ -4,7 +4,7 @@
   <title><![CDATA[风行的博客]]></title>
   <link href="http://lijingcheng.github.io/atom.xml" rel="self"/>
   <link href="http://lijingcheng.github.io/"/>
-  <updated>2015-10-20T15:14:28+08:00</updated>
+  <updated>2015-11-06T18:31:12+08:00</updated>
   <id>http://lijingcheng.github.io/</id>
   <author>
     <name><![CDATA[风行]]></name>
@@ -95,10 +95,363 @@
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[Objective-C Runtime开发]]></title>
+    <link href="http://lijingcheng.github.io/blog/20150921/objective-c-runtimekai-fa/"/>
+    <updated>2015-09-21T14:30:27+08:00</updated>
+    <id>http://lijingcheng.github.io/blog/20150921/objective-c-runtimekai-fa</id>
+    <content type="html"><![CDATA[<p><br/></p>
+
+<p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/runtime.jpg" width="150" height="150"  ></p>
+
+<blockquote><p><strong>Runtime - <em>使用C和汇编实现的运行时代码库，Objective-C中有很多语言特性都是通过它来实现。</em></strong> <br/>
+了解Runtime开发可以帮助我们更灵活的使用Objective-C这门语言，我们可以将程序功能推迟到运行时再去决定怎么做，还可以利用Runtime来解决项目开发中的一些设计和技术问题，使开发过程更加具有灵活性。</p></blockquote>
+
+<p><br/></p>
+
+<!-- more -->
+
+
+<h1>消息传递(Messaging)</h1>
+
+<p>Objective-C对于调用对象的某个方法这种行为叫做给对象发送消息，对象在运行时要执行什么方法不是在编译时决定，而是在程序运行时才决定，runtime会根据消息接收者是否能响应消息而做出不同的反应，消息也许会由该指定对象处理，也可以由其它对象处理，还可以让对象执行别的方法或者不处理。下面我们来了解一下这个过程：</p>
+
+<ul>
+<li>我们写一个给对象发送消息的代码</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">[</span><span class="n">array</span> <span class="nl">insertObject</span><span class="p">:</span><span class="n">obj</span> <span class="nl">atIndex</span><span class="p">:</span><span class="mi">5</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>编译器首先会将上面代码翻译成这种样子</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">objc_msgSend</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">insertObject</span><span class="p">:</span><span class="nl">atIndex</span><span class="p">:),</span> <span class="n">obj</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<ul>
+<li>系统在运行时会通过array对象的isa指针找到对应的class。</li>
+<li>在class的cache方法列表中用SEL去找对应method，如果找不到便去class的方法列表中去找</li>
+<li>如果在方法列表中也找不对对应method时，便沿着继承体系继续向上查找
+
+<ul>
+<li>找到后将method放入cache，以便下次能快速定位，然后再去执行method的IMP</li>
+<li>找不到时系统便报错：unrecognized selector sent to insertObject:atIndex:</li>
+</ul>
+</li>
+</ul>
+
+
+<p><br/>
+<strong>Runtime提供了三种方法避免因为找不到方法而崩溃</strong></p>
+
+<ul>
+<li>当找不到方法实现时，Runtime会先发送&#8221;+resolveInstanceMethod:&ldquo;或&rdquo;+resolveClassMethod:&ldquo;消息，我们可以重写它然后为对象指定一个处理方法。</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="kt">void</span> <span class="nf">dynamicXXXMethod</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">,</span> <span class="kt">SEL</span> <span class="n">_cmd</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;ok...&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">+</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">resolveInstanceMethod:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">aSEL</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">aSEL</span> <span class="o">==</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">xxx</span><span class="p">:))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">class_addMethod</span><span class="p">([</span><span class="nb">self</span> <span class="k">class</span><span class="p">],</span> <span class="n">aSEL</span><span class="p">,</span> <span class="p">(</span><span class="kt">IMP</span><span class="p">)</span><span class="n">dynamicXXXMethod</span><span class="p">,</span> <span class="s">&quot;v@:&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="nb">super</span> <span class="n">resolveInstanceMethod</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>class_addMethod方法的最后一个参数用来指定所添加方法的参数及返回值，叫<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html">Type Encodings</a>。</p></blockquote>
+
+<ul>
+<li>如果resolve方法返回&#8221;NO&#8221;，Runtime会发送&#8221;-forwardingTargetForSelector:&ldquo;消息，允许我们将消息转发给能处理它的其它对象。</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">forwardingTargetForSelector:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">aSelector</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">aSelector</span> <span class="o">==</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">xxx</span><span class="p">:)){</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">otherObject</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="nb">super</span> <span class="nl">forwardingTargetForSelector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>当&#8221;-forwardingTargetForSelector:&ldquo;返回&#8221;nil&#8221;时，Runtime会发送&rdquo;-methodSignatureForSelector:&ldquo;和&rdquo;-forwardInvocation:&ldquo;消息。我们可以选择忽略消息、抛出异常、将消息转由当前对象或其它对象的任意消息来处理。</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="c1">//根据SEL生成NSInvocation对象，然后再由&quot;-forwardInvocation:&quot;方法进行转发。</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSMethodSignature</span> <span class="o">*</span><span class="p">)</span><span class="nf">methodSignatureForSelector:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">aSelector</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="bp">NSMethodSignature</span> <span class="o">*</span><span class="n">signature</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="nl">methodSignatureForSelector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">signature</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">signature</span> <span class="o">=</span> <span class="p">[</span><span class="n">otherObject</span> <span class="nl">instanceMethodSignatureForSelector</span><span class="p">:</span><span class="n">aSelector</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">signature</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">forwardInvocation:</span><span class="p">(</span><span class="bp">NSInvocation</span> <span class="o">*</span><span class="p">)</span><span class="nv">invocation</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">SEL</span> <span class="n">sel</span> <span class="o">=</span> <span class="n">invocation</span><span class="p">.</span><span class="n">selector</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span><span class="p">([</span><span class="n">otherObject</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="n">sel</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">invocation</span> <span class="nl">invokeWithTarget</span><span class="p">:</span><span class="n">otherObject</span><span class="p">];</span><span class="c1">//转发消息</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="nb">self</span> <span class="nl">doesNotRecognizeSelector</span><span class="p">:</span><span class="n">sel</span><span class="p">];</span><span class="c1">//抛出异常</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><br/></p>
+
+<h1>KVO</h1>
+
+<p>当我们为对象添加观察者后，Runtime会在运行时创建这个对象所在类的子类，然后重写监听属性的set方法并在方法中调用&#8221;-willChangeValueForKey:&ldquo;和&rdquo;-didChangeValueForKey:&ldquo;来通知观察者，当移除观察者后，Runtime便会将这个子类删除。</p>
+
+<p><br/></p>
+
+<h1>关联对象(Associated Objects)</h1>
+
+<p>在Category中可以为类添加实例方法或类方法，但是不支持添加实例变量，所以即使我们在category中为类添加了property，也不能直接使用它，Runtime可以解决这个问题，我们只需要定义一个指针，然后通过&#8221;objc_setAssociatedObject&#8221;方法将指针与对象进行关联并指定内存管理方式。具体代码如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">@interface</span> <span class="bp">NSObject</span> <span class="nl">(JC)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">ID</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="bp">NSObject</span> <span class="nl">(JC)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">IDKey</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nf">ID</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">objc_getAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">IDKey</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setID:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">ID</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">objc_setAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">IDKey</span><span class="p">,</span> <span class="n">ID</span><span class="p">,</span> <span class="n">OBJC_ASSOCIATION_COPY_NONATOMIC</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+<br/></p>
+
+<h1>AOP(Method Swizzling)</h1>
+
+<p>我们可以通过继承、Category、AOP方式来扩展类的功能。</p>
+
+<ul>
+<li>继承比较适合在设计底层代码架构时使用，不适当的使用会让代码看起来很啰嗦，并且增加维护难度。</li>
+<li>Category适合为现有类添加方法。</li>
+<li>当需要修改现有类的方法并且拿不到源码时，继承和AOP都能解决问题，但是用AOP来解决代码耦合度更低。其实就算能拿到源码，往往直接去改源码也不是个好办法。</li>
+</ul>
+
+
+<p><br/>
+在Objective-C中，可以通过&#8221;Method Swizzling&#8221;技术来实现AOP，下面我们通过交换两个方法的实现代码来向已存在的方法中添加其它功能。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &lt;objc/runtime.h&gt; </span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="bp">UIViewController</span> <span class="nl">(Tracking)</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">load</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">static</span> <span class="kt">dispatch_once_t</span> <span class="n">onceToken</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">onceToken</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="kt">Class</span> <span class="n">aClass</span> <span class="o">=</span> <span class="p">[</span><span class="nb">self</span> <span class="k">class</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kt">SEL</span> <span class="n">originalSelector</span> <span class="o">=</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">viewWillAppear</span><span class="p">:);</span>
+</span><span class='line'>        <span class="kt">SEL</span> <span class="n">swizzledSelector</span> <span class="o">=</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">swizzled_viewWillAppear</span><span class="p">:);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">Method</span> <span class="n">originalMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">aClass</span><span class="p">,</span> <span class="n">originalSelector</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">Method</span> <span class="n">swizzledMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">aClass</span><span class="p">,</span> <span class="n">swizzledSelector</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// 如果要对类方法进行交换，使用下面注释的代码</span>
+</span><span class='line'>        <span class="c1">// Class aClass = object_getClass((id)self);</span>
+</span><span class='line'>        <span class="c1">// </span>
+</span><span class='line'>        <span class="c1">// Method originalMethod = class_getClassMethod(aClass, originalSelector);</span>
+</span><span class='line'>        <span class="c1">// Method swizzledMethod = class_getClassMethod(aClass, swizzledSelector);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">//交换两个方法的实现</span>
+</span><span class='line'>        <span class="kt">BOOL</span> <span class="n">didAddMethod</span> <span class="o">=</span> <span class="n">class_addMethod</span><span class="p">(</span><span class="n">aClass</span><span class="p">,</span> <span class="n">originalSelector</span><span class="p">,</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">swizzledMethod</span><span class="p">),</span> <span class="n">method_getTypeEncoding</span><span class="p">(</span><span class="n">swizzledMethod</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">didAddMethod</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="n">class_replaceMethod</span><span class="p">(</span><span class="n">aClass</span><span class="p">,</span> <span class="n">swizzledSelector</span><span class="p">,</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">originalMethod</span><span class="p">),</span> <span class="n">method_getTypeEncoding</span><span class="p">(</span><span class="n">originalMethod</span><span class="p">));</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="n">method_exchangeImplementations</span><span class="p">(</span><span class="n">originalMethod</span><span class="p">,</span> <span class="n">swizzledMethod</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#pragma mark - Method Swizzling </span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//由于方法实现已经被交换，所以系统在调用&quot;viewWillAppear:&quot;时，实际上会调用&quot;swizzled_viewWillAppear:&quot;</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">swizzled_viewWillAppear:</span><span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nv">animated</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="c1">//下面代码表面上看起来会引起递归调用，由于函数实现已经被交换，实际上会调用&quot;viewWillAppear:&quot;</span>
+</span><span class='line'>   <span class="p">[</span><span class="nb">self</span> <span class="nl">swizzled_viewWillAppear</span><span class="p">:</span><span class="n">animated</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//在原有基础上添加其它功能(写日志等)</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+<br/></p>
+
+<h1>其它</h1>
+
+<p>我们可以通过Runtime特性来获得类的所有属性名称和类型，然后再通过KVC将Json中的值填充给该类的对象。还可以在程序运行时为类添加方法或替换方法从而使对象能够更灵活的根据需要来选择实现方法。总之Runtime库就象一堆积木，只要发挥想象力便能实现各种各样的功能，但前提是你需要了解它。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[iOS应用开发流程]]></title>
-    <link href="http://lijingcheng.github.io/blog/20151010/iosying-yong-kai-fa-liu-cheng/"/>
-    <updated>2015-10-10T10:36:14+08:00</updated>
-    <id>http://lijingcheng.github.io/blog/20151010/iosying-yong-kai-fa-liu-cheng</id>
+    <link href="http://lijingcheng.github.io/blog/20150810/iosying-yong-kai-fa-liu-cheng/"/>
+    <updated>2015-08-10T10:36:14+08:00</updated>
+    <id>http://lijingcheng.github.io/blog/20150810/iosying-yong-kai-fa-liu-cheng</id>
     <content type="html"><![CDATA[<p><br/>
 <img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/Xcode.png" width="160" height="160"  ></p>
 
@@ -107,6 +460,280 @@
 <p><br/></p>
 
 <!-- more -->
+
+
+<p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/Xcode.png" width="160" height="160"  ></p>
+
+<blockquote><p><strong>软件开发流程 - <em>程序的生命周期是指应用程序从启动到结束整个阶段的全过程.</em></strong> <br/>
+本文主要介绍在进行iOS开发。</p></blockquote>
+
+<p><br/></p>
+
+<!-- more -->
+
+
+<h1>开发前的准备</h1>
+
+<h4>申请苹果开发者帐号</h4>
+
+<h4>配置开发者证书及描述文件</h4>
+
+<h1>开发阶段</h1>
+
+<p>代码规范
+任务拆分
+技术选型，调研，风险评估
+开发计划 ominiplan&hellip;</p>
+
+<h4>搭建环境（cocoapods.git sourcetree oschina..）</h4>
+
+<h4>工程目录</h4>
+
+<h4>代码分层</h4>
+
+<h4>。</h4>
+
+<h1>开发完成申请上线</h1>
+
+<p>代码签名
+打包提交
+等待review (申请加急)
+代码签名 (code signing) 和配置文件 (provisioning)</p>
+
+<p>iOS开发过程中如果需要进行真机调试、发布需要注册申请很多证书，对于初学者往往迷惑不解，再加上今天的文章中会牵扯到一些特殊配置，这里就简单的对iOS开发的常用证书和秘钥等做一说明。
+证书
+iOS常用的证书包括开发证书和发布证书，无论是真机调试还是最终发布应用到App Store这两个证书都是必须的，它是iOS开发的基本证书。
+a.开发证书：开发证书又分为普通开发证书和推送证书，如果仅仅是一般的应用则前者即可满足，但是如果开发推送应用则必须使用推送证书。
+b.发布证书：发布证书又可以分为普通发布证书、推送证书、Pass Type ID证书、站点发布证书、VoIP服务证书、苹果支付证书。同样的，对于需要使用特殊服务的应用则必须选择对应的证书。
+应用标识
+App ID,应用程序的唯一标识，对应iOS应用的Bundle Identifier，App ID在苹果开发者中心中分为通配应用ID和明确的应用ID,前者一般用于普通应用开发，一个ID可以适用于多个不同标识的应用；但是对于使用消息推送、Passbook、站点发布、iCloud等服务的应用必须配置明确的应用ID。
+设备标识
+UDID,用于标识每一台硬件设备的标示符。注意它不是device token，device token是根据UDID使用一个只有Apple自己才知道的算法生成的一组标示符。
+配置简介
+Provisioning Profiles,平时又称为PP文件。将UDID、App ID、开发证书打包在一起的配置文件，同样分为开发和发布两类配置文件。
+秘钥
+在申请开发证书时必须要首先提交一个秘钥请求文件，对于生成秘钥请求文件的mac，如果要做开发则只需要下载证书和配置简介即可开发。但是如果要想在其他机器上做开发则必须将证书中的秘钥导出（导出之后是一个.p12文件），然后导入其他机器。同时对于类似于推送服务器端应用如果要给APNs发送消息，同样需要使用.p12秘钥文件，并且这个秘钥文件需要是推送证书导出的对应秘钥。</p>
+
+<p>公钥加密机制</p>
+
+<p>使用公钥加密机制，双方各自拥有一份公钥和一份私钥，公钥和私钥通过数学演算联系在一起。公钥用于将明文转化为密文（变成了一堆乱码），私钥用来解密这一堆乱码般的信息。</p>
+
+<p>一旦信息被公钥加密，它将只能由相应的私钥解密。两者缺一不可，而且也不能反过来使用。公钥可以自由传播，无需担心系统安全性降低；但私钥应妥善保管，不可将其泄露给未经授权解密的信息的用户，这就是公钥和私钥这两个名称的由来。</p>
+
+<p>打包前关zombie，证书都设置好后先编译再打包。
+在buildsetting 里设置product name为app name，bundle name与它一样，bundle display name可以不一样，但比较类似。</p>
+
+<p>感谢您联系苹果开发者计划支持团队关于开发者账号
+的问题。我是Cathy, 非常高兴能给您提供帮助。</p>
+
+<p>iOS Developer Program 分为 iOS Standard Program 和 iOS Enterprise Program 两种, iOS Standard Program 又包括Standard Company 和 Standard Individual两种， 请您查看：</p>
+
+<p>苹果公司目前提供两种 iOS Developer Program enrollment包括如下：</p>
+
+<ol>
+<li>Standard Program</li>
+</ol>
+
+
+<p>?一年$99美元 - 个人
+- 此计划是为个人开发者能够开发iPhone / iPod Touch/ iPad的商业应用，并且能够发布他们的应用程序到App Store上。
+- 这个程序允许开发人员分发其应用程序到多达100个设备上作测试, 并能分发应用程序到App Store上进行发布及销售。
+- 这个程序不允许开发人员创建一个团队，不能添加团队成员到他们的开发者团队。
+- 开发者参加这一计划将会以其个人名义作为卖方在App Store上进行销售。</p>
+
+<p>?一年$99美元 - 公司
+- 此计划是对于希望开发iPhone和iPod touch/iPad的应用程序的公司而设。
+- 此方案允许公司分发他们的应用程序至多达100个设备作测试, 和分发其应用程序到App Store上进行发布或销售。
+- 这个程序允许开发人员创建一个团队，并可以添加其他开发者到其开发者团队中。
+- 参加这一计划，其公司名称将作为卖方在App Store上销售。
+- 公司应在邓白氏注册并拥有有效的DUNS号码。</p>
+
+<ol>
+<li>Enterprise Program</li>
+</ol>
+
+
+<p>?一年$299美元 - 公司
+- 公司应在邓白氏注册并拥有有效的DUNS号码。
+- 此计划是对于有意开发iPhone/iPod Touch/iPad 应用程序的公司而设，这将是只发给其雇员的内部专有的计划。
+- 这个程序允许开发人员创建一个团队，并可以添加其他开发者到其开发者团队中。
+- 此计划将不会允许该公司在App Store出售他们的应用程序。</p>
+
+<p>请您至以下网站查询您的邓式编码，如果我们系统无法找到贵公司的邓白氏编码系统将会提交一个申请：</p>
+
+<p><a href="https://developer.apple.com/ios/enroll/dunsLookupForm.action">https://developer.apple.com/ios/enroll/dunsLookupForm.action</a></p>
+
+<p>其他有关 iOS Developer Program 开发计划的网站 :
+<a href="http://developer.apple.com/support/ios/enrollment.html/">http://developer.apple.com/support/ios/enrollment.html/</a>
+<a href="http://developer.apple.com/programs/start/standard/">http://developer.apple.com/programs/start/standard/</a>
+<a href="http://developer.apple.com/programs/which-program/">http://developer.apple.com/programs/which-program/</a></p>
+
+<p>如果您有其他的问题，欢迎致电或通过电邮的方式跟我们联系。我们的办公时间是周一至周五，09:00-17:00 CST，电话号码是4006 701 855。我们很乐意给您提供帮助。</p>
+
+<p>感谢您参与我们的开发者计划。</p>
+
+<p>Best regards,</p>
+
+<p>Cathy
+Apple Developer Program Support</p>
+
+<p>企业账号三大好处：
+发布内部App
+在各个设备上测试
+代码级别的技术支持
+免费申请DUNS:<a href="https://developer.apple.com/ios/enroll/dunsLookupForm.action">https://developer.apple.com/ios/enroll/dunsLookupForm.action</a></p>
+
+<p>为什么要申请开发者账号?
+只有拥有苹果开发者账号才能够用真实的iPhone手机对我们开发的产品进行测试工作。否则只能用电脑上的虚拟手机进行测试。而真机测试对于产品整个开发阶段来说都是很重要的，主要原因如下：
+1.     产品的核心功能包括GPS定位，电脑上的虚拟手机没有办法实现此功能。
+2.     我们对产品的性能要求比较高，由于虚拟手机的内存比真实手机大很多，所以不能够准确展现产品性能。
+3.     产品每个模块都有网络访问功能，如果使用虚拟手机只能够通过WIFI去获取数据，而产品用户对程序的主要使用场景在户外，更多是使用2G/3G方式。所以在网络请求时间问题的测试上，虚拟手机不能够真实体现具体情况。</p>
+
+<p>苹果开发者账号分类:
+苹果开发者账号分为 个人版(99$/年)，公司版(99$/年)，企业版(299$/年)三种类型。</p>
+
+<p>个人账号：只能有一个开发者，开发者将会以其个人名义作为卖方在苹果商店里进行销售. 申请时需要提供信用卡信息。
+公司账号：可以有多个开发者协同开发，其公司名称将作为卖方在App Store上销售。除信用卡信息外还需要提供公司基本信息和营业执照复印件等信息, 并且应在申请公司版账号前应首先申请邓白氏编码。
+企业账号: 企业账号所开发的App只能用于企业内部员工，不能够提交到苹果商店上供其他用户使用, 在申请企业版账号前应首先申请邓白氏编码。</p>
+
+<p>经过对各账号的比较，建议使用公司版账号(99$/年),原因如下:
+1.      企业账号不能够将App发布到苹果商店,只能用于企业内部员工,因此不考虑使用;
+2.      个人账号只能显示个人姓名在上架的苹果商店的开发者一栏里,这样无法体现是我们公司的产品,公司账号在已上线的苹果商店的开发者一栏里可以显示注册时公司的名称也可以自定义；
+3.  公司版账号相对于个人版来说，它允许开发人员创建一个团队，并可以添加其他开发者到其开发者团队中，这样不仅有利于团队开发，也便于管理。</p>
+
+<p>申请公司版开发者账号之前需要申请邓白氏编码,关于邓白氏编码介绍如下:
+1.什么是邓白氏编码？
+它是一个独一无二的9位数字全球编码，相当于企业的身份识别码 （就像是个人的身份证），被广泛应用于企业识别、商业信息的组织及整理。这个号码是由邓白氏公司签发的，每个号码会跟一个唯一的企业实体相对应，不会重复使用。也就是说，一个号码代表一个公司实体。</p>
+
+<p>2.为什么要提到邓白氏编码？
+在申请苹果企业版开发者账号或是公司版开发者账号时,苹果公司要求申请公司拥有可以唯一标识公司的邓白氏编码.</p>
+
+<p>3.申请邓白氏编码可能会遇到的问题有哪些?
+(1)邓白氏编码是可以免费申请的,申请之前拨打电话400-670-1885,此电话为苹果客服电话,会提供关于邓白氏编码申请的免费链接地址和其他相关信息;
+       (2)邓白氏编码要在申请开发者账号之前申请下来,原因是邓白氏编码有一个审核的过程,时间在5到7个工作日或是14个工作日,这个时间取决于苹果公司,在此期间可以拨打400-670-1885电话咨询苹果公司
+       (3)邓白氏编码是否已入苹果数据库,如果已入,便可以申请开发者账号;</p>
+
+<p>苹果公司关于开发者账号续费的问题:
+1.申请公司版账号(99$/年)满一年后,如果需要继续使用开发者账号,需要进行续费,续费金额根据申请账号而定,公司版账号是99$;
+2.续费时间可以提前至60天,不能延期,否则上架产品会被强制下架;</p>
+
+<p>备注: 苹果开发者网站developer.apple.com自2013/7/18起,出现宕机状况,有关开发者账号的所有网页无法正常显示,经苹果客服核实,此问题解决时间无法确定,只能通过经常点击查看是否可用,于今日2013/7/24还不能使用.</p>
+
+<p>前言
+公司目前申请的开发者帐号方案为公司版帐号，此方案允许在一年内将应用程序安装到100台设备上测试使用。并可以将应用程序发布到App Store上进行销售。公司名称将作为卖方显示在App Store上面。当公司内的开发人员比较多的时候，还可以使用公司版帐号对人员进行分组管理。</p>
+
+<p>概述
+有了开发者帐号就可以通过帐号生成开发者证书和授权文件进行真机调试，操作流程大致如下：生成证书 à 注册设备 à 生成AppID（应用程序标识符） à 生成授权文件。具体介绍如下：
+Certification证书是苹果公司对开发者所使用电脑开发资格的认证方式，共分为3种：
+1、    Developer Certification（开发证书）
+此证书安装到电脑上后，开发人员便可以通过设备进行真机调试。并且可以通过此证书生成副本供多台电脑安装使用。
+2、    Distribution Certification（发布证书）
+此证书安装到电脑上后便提供了向iOS App Store发布应用的权限，开发人员可以利用它制作测试版和发布版的程序。需要注意此证书不可生成副本，仅有安装该证书的电脑才可使用。
+3、    World Wide Developer Relation颁发的WWDR中间证书。可从<a href="http://developer.apple.com/certificationauthority/AppleWWDRCA.cer">http://developer.apple.com/certificationauthority/AppleWWDRCA.cer</a> 或门户网站上下载并安装。</p>
+
+<p>注册设备是指将用于真机调试及测试用的设备注册在“iOS Provisioning Portal”上(portal用来管理证书、设备、AppID、授权文件等)，注册时需要提供设备名称和它的唯一设备标识符(UDID)。设备名称可自定义，UDID可通过以下方式获取：</p>
+
+<ul>
+<li>1、     开发人员可将设备连接到装有Xcode的Mac电脑上，然后打开Organizer窗口的Devices界面，在界面左侧找到自己的设备，点击后右侧的设备信息中将出现Identifier（即UDID）。</li>
+<li>2、     非开发人员可将设备连接到装有iTunes的电脑上，然后在设备的Summary(概述)界面中单击“Serial Number(序列号)”，这样会使序列号变成Identifier(UDID)。</li>
+</ul>
+
+
+<p>AppID（应用程序标识符）是应用程序在App Store上的唯一标识，可保证不会与其他应用冲突，通常使用苹果的反向域名符号展示，例如：com.citylife.Trackup或com.citylife.<em>。当应用中使用了APNS（Apple Push Notification Service）、Game Center和In-App Purchase时，AppID便不可以使用“</em>”通配符。</p>
+
+<p>Provisioning Profile（授权文件）在Xcode中它用于为代码签名并授权应用程序可以在指定的设备上运行，或者允许应用程序加入到App Store中。授权文件的主要内容包括可用来测试设备的UDID（可多个）、AppID和所使用的证书。授权文件分为“开发授权文件”和“发布授权文件”两种：
+1、    Developer Provisioning Profile（开发授权文件）
+此文件应在装有开发证书或其副本的电脑上使用，开发人员在Xcode中选择该授权文件后，便可以将应用程序安装到授权文件指定的测试设备中进行真机调试。需要注意的是授权文件中的AppID应与开发程序中使用的Bundle Identifier一致。
+2、    Distribution Provisioning Profile（发布授权文件）
+此文件应在装有发布证书的电脑上使用，在生成发布授权文件时可选择两种方式：
+1）、App Store(发布版)：用来将App发布到App Store上使用的授权文件。生成时不需要选择测试设备的UDID。
+2）、Ad Hoc(测试版)：用来将App分发给测试人员或指定客户使用的授权文件。生成时需要选择测试设备的UDID。测试人员在拿到通过此授权文件发布出来的ipa格式的程序安装文件后，可通过iTunes或91助手安装使用。
+注：当新添加测试设备后需要同时修改相应授权文件。
+详细操作步骤
+为了获得开发者证书、首先需要在电脑上生成一个证书签名请求文件。要创建证书申请文件并自动生成开发人员专属的密钥，请打开OS X系统自带的钥匙串访问（Keychain Access）工具，并选择下图中所示的发起证书申请功能。</p>
+
+<p>打开之后的界面如下图所示。请务必输入与Apple ID相符的邮箱和姓名，并选择Save to Disk。</p>
+
+<p>接下来需要确认证书申请文件的文件名和保存位置，存至桌面即可。</p>
+
+<p>之后的操作详见以下链接：
+<a href="http://www.cnblogs.com/ifeng/articles/2295859.html">http://www.cnblogs.com/ifeng/articles/2295859.html</a></p>
+
+<p>使用Xcode进行实机调试</p>
+
+<p>在自己的Mac电脑上连接iOS设备进行实机调试，一般来说需要以下几个步骤：
+·      检查当前电脑上是否存在有效的开发者密钥和证书，如果没有则从备份的p12文件导入；
+·      检查当前电脑上是否存在有效的provisioning profile，如果没有则从开发者中心下载；
+·      将进行过登记的iOS设备连接至电脑；
+·      在Xcode中配置当前开发工程，确认使用的开发者证书是有效证书；
+·      在设备上进行调试。</p>
+
+<p>前两步在前文已有所交代，下面着重讲述后三步中需要注意的事项。</p>
+
+<p>将iOS设备连接至电脑：</p>
+
+<p>设备的当前状态可以在Organizer窗口的Devices页中查看，左侧导航栏中带有设备名称的条目应该有一个灰色或绿色的指示灯，如下图所示。</p>
+
+<p>指示灯为绿色表示当前可以进行实机调试。如果指示灯为灰色，右侧红线所示区域应该会有一个按钮叫“Use for Development”，点击之后等待进度条走完，指示灯应该就会变绿了。如果点击按钮之后提示输入Apple ID帐号密码，说明当前电脑上没有可用的provisioning profile，输入Apple ID应该可以自动下载provisioning profile。</p>
+
+<p>如果指示灯为橘色或红色，则表示当前不能进行实机调试，可以在红色区域查看是否有“Use for Development”按钮，没有的话会在这里显示不能进行实机调试的原因，如无法下载provisioning profile、设备上操作系统版本超出当前Xcode支持范围等。</p>
+
+<p>配置当前开发工程：</p>
+
+<p>在当前开发工程下，进入Targets的Build Settings，确认Code Signing分组下的设置如图中所示为iPhone Developer，并且后面灰色括号中的内容符合开发者密钥中的姓名和provisioning profile名。</p>
+
+<p>开始实机调试：</p>
+
+<p>完成以上步骤确认后，可以看到Xcode左上角执行对象列表中的第一项由“iOS Device”变成了当前连接的设备名。如果设备刚刚接上电脑，这里可能需要等待数十秒时间，直到Xcode完全识别出设备为止。如果同时连接了多个支持实机调试的设备，也可以在这个列表中进行选择。如下图所示。</p>
+
+<p>确认列表中选择了要实机调试的设备名后。点击Run按钮，或使用键盘快捷方式开始调试运行即可。</p>
+
+<p>如果运行时出现以下画面，请点击Always Allow按钮。</p>
+
+<p>如果在设备上设置了解锁密码，请先输入密码解锁设备，进入iOS的home screen后再从Xcode中选择运行应用，否则可能会提示无法解锁设备。</p>
+
+<p>如果要进行Instruments跟踪而非Debug，则需要选择Product菜单下的Profile选项，后续操作与在模拟器上进行跟踪类似，此处不再赘述。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[代码整洁之道]]></title>
+    <link href="http://lijingcheng.github.io/blog/20150706/dai-ma-zheng-ji-zhi-dao/"/>
+    <updated>2015-07-06T18:17:09+08:00</updated>
+    <id>http://lijingcheng.github.io/blog/20150706/dai-ma-zheng-ji-zhi-dao</id>
+    <content type="html"><![CDATA[<p><br/></p>
+
+<p><img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/code.jpg" width="140" height="140"  ></p>
+
+<blockquote><p><strong>代码 - <em>写出让机器读的代码很容易，让人也读的容易才是好代码。</em></strong> <br/>
+程序的质量不仅依赖于前期的架构设计还与代码质量紧密相关。很多程序员不愿意维护别人写的项目，大多原因是旧项目的代码质量不好，在这种情况下不仅会影响工作情绪，还会大大增加项目的维护时间和风险，对于那些吹嘘一个app写了数十万行代码的人，我的第一反应就是先鄙视一下😄。</p></blockquote>
+
+<p><br/></p>
+
+<!-- more -->
+
+
+<p><strong>其实在写代码时只要做到以下几点我觉得就算及格了</strong></p>
+
+<ul>
+<li>避免重复代码</li>
+<li>使方法短小并专注一个功能的实现</li>
+<li>变量、方法、类的命名要有意义</li>
+<li>适当的使用空行和空格</li>
+<li>写有意义的注释</li>
+<li>删除无用代码</li>
+<li>不使用魔术数字</li>
+</ul>
+
+
+<p><br/>
+<strong>如果能做到以下几点就更好了</strong></p>
+
+<ul>
+<li>把方法写在合适的地方</li>
+<li>甚用继承</li>
+<li>避免过渡使用设计模式</li>
+</ul>
 
 ]]></content>
   </entry>
