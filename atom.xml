@@ -4,7 +4,7 @@
   <title><![CDATA[风行的博客]]></title>
   <link href="http://lijingcheng.github.io/atom.xml" rel="self"/>
   <link href="http://lijingcheng.github.io/"/>
-  <updated>2015-11-07T09:37:14+08:00</updated>
+  <updated>2015-11-15T18:06:24+08:00</updated>
   <id>http://lijingcheng.github.io/</id>
   <author>
     <name><![CDATA[风行]]></name>
@@ -444,25 +444,6 @@
 <h1>其它</h1>
 
 <p>我们可以通过Runtime特性来获得类的所有属性名称和类型，然后再通过KVC将Json中的值填充给该类的对象。还可以在程序运行时为类添加方法或替换方法从而使对象能够更灵活的根据需要来选择实现方法。总之Runtime库就象一堆积木，只要发挥想象力便能实现各种各样的功能，但前提是你需要了解它。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[iOS应用开发流程]]></title>
-    <link href="http://lijingcheng.github.io/blog/20150810/iosying-yong-kai-fa-liu-cheng/"/>
-    <updated>2015-08-10T10:36:14+08:00</updated>
-    <id>http://lijingcheng.github.io/blog/20150810/iosying-yong-kai-fa-liu-cheng</id>
-    <content type="html"><![CDATA[<p><br/>
-<img class="left" src="http://7x00ed.com1.z0.glb.clouddn.com/Xcode.png" width="160" height="160"  ></p>
-
-<blockquote><p><strong>软件开发流程 - <em>to be continue&hellip;</em></strong></p></blockquote>
-
-<p><br/></p>
-
-<!-- more -->
-
-
-
 ]]></content>
   </entry>
   
